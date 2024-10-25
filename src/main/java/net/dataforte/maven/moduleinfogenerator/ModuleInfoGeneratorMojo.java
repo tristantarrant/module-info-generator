@@ -34,7 +34,7 @@ public class ModuleInfoGeneratorMojo extends AbstractMojo {
    public void execute() throws MojoExecutionException {
       try {
          if (skip) {
-            getLog().info("Skipping proto compatibility check");
+            getLog().info("Skipping module-info.class generation");
             return;
          }
          ModuleInfoYml moduleInfo;
@@ -84,11 +84,11 @@ public class ModuleInfoGeneratorMojo extends AbstractMojo {
             pool.write(dos);
             dos.writeShort(0x8000); // access flags
             dos.writeShort(classEntry.index()); // this class
-            dos.writeShort(0); // super class
-            dos.writeShort(0); // interface count
-            dos.writeShort(0); // fields count
-            dos.writeShort(0); // methods count
-            dos.writeShort(0x2); // attributes count
+            dos.writeShort(0); // super class: a module doesn't have one
+            dos.writeShort(0); // interface count: a module has no interface
+            dos.writeShort(0); // fields count: a module has no fields
+            dos.writeShort(0); // methods count: a module has no methods
+            dos.writeShort(0x2); // attributes count: SourceFile and Module
             // SourceFile Attribute
             dos.writeShort(sourceFile.index());
             dos.writeInt(2); // sourcefile attribute length is 2
@@ -144,7 +144,7 @@ public class ModuleInfoGeneratorMojo extends AbstractMojo {
             }
 
             dos.writeShort(moduleInfo.getUses().size());
-            for(String uses : moduleInfo.getUses()) {
+            for (String uses : moduleInfo.getUses()) {
                dos.writeShort(pool.addClass(uses).index());
             }
 
